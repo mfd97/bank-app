@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Link } from "expo-router";
 
-export default function Login() {
+export default function Register() {
   return (
     <View style={styles.container}>
-      <Text>Login Screen</Text>
-      <Link href="./register">Go to Register</Link>
+      <Text>Register Screen</Text>
+      <Link href="./home">Go to Login</Link>
     </View>
   );
 }

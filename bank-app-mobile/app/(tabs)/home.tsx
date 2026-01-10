@@ -1,11 +1,10 @@
 import { View, Text, StyleSheet } from "react-native";
-import { Link } from "expo-router";
 
-export default function Login() {
+export default function HomeScreen() {
   return (
     <View style={styles.container}>
-      <Text>Login Screen</Text>
-      <Link href="./register">Go to Register</Link>
+      <Text style={styles.title}>Home Screen</Text>
+      <Text>Welcome to the main screen of the app!</Text>
     </View>
   );
 }
@@ -15,5 +14,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    padding: 20,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
 });
