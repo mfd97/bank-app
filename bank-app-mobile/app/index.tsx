@@ -21,78 +21,86 @@ export default function Login() {
     console.log("Sign in with:", { email, password });
   };
 
+  const content = (
+    <ScrollView
+      contentContainerStyle={styles.scrollContent}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View style={styles.formContainer}>
+        <Text style={styles.title}>Welcome Back</Text>
+        <Text style={styles.subtitle}>Sign in to continue</Text>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email"
+            placeholderTextColor="#999"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoComplete="email"
+            textContentType="emailAddress"
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your password"
+            placeholderTextColor="#999"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!isPasswordVisible}
+            autoCapitalize="none"
+            autoComplete="password"
+            textContentType="password"
+          />
+          <TouchableOpacity
+            style={styles.eyeIcon}
+            onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+          >
+            <Text style={styles.eyeIconText}>
+              {isPasswordVisible ? "👁️" : "👁️‍🗨️"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity
+          style={[
+            styles.button,
+            (!email || !password) && styles.buttonDisabled,
+          ]}
+          onPress={handleSignIn}
+          disabled={!email || !password}
+        >
+          <Text style={styles.buttonText}>Sign In</Text>
+        </TouchableOpacity>
+
+        <View style={styles.linkContainer}>
+          <Text style={styles.linkText}>Don&apos;t have an account? </Text>
+          <Link href="./register" asChild>
+            <TouchableOpacity>
+              <Text style={styles.link}>Sign Up</Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
+      </View>
+    </ScrollView>
+  );
+
+  if (Platform.OS === "web") {
+    return <View style={styles.container}>{content}</View>;
+  }
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={styles.formContainer}>
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Sign in to continue</Text>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your email"
-              placeholderTextColor="#999"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-              textContentType="emailAddress"
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your password"
-              placeholderTextColor="#999"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!isPasswordVisible}
-              autoCapitalize="none"
-              autoComplete="password"
-              textContentType="password"
-            />
-            <TouchableOpacity
-              style={styles.eyeIcon}
-              onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-            >
-              <Text style={styles.eyeIconText}>
-                {isPasswordVisible ? "👁️" : "👁️‍🗨️"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity
-            style={[
-              styles.button,
-              (!email || !password) && styles.buttonDisabled,
-            ]}
-            onPress={handleSignIn}
-            disabled={!email || !password}
-          >
-            <Text style={styles.buttonText}>Sign In</Text>
-          </TouchableOpacity>
-
-          <View style={styles.linkContainer}>
-            <Text style={styles.linkText}>Don't have an account? </Text>
-            <Link href="./register" asChild>
-              <TouchableOpacity>
-                <Text style={styles.link}>Sign Up</Text>
-              </TouchableOpacity>
-            </Link>
-          </View>
-        </View>
-      </ScrollView>
+      {content}
     </KeyboardAvoidingView>
   );
 }
