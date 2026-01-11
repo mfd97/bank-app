@@ -9,16 +9,28 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
+import { useMutation } from "@tanstack/react-query";
+import { login } from "../../api/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
+  const { mutate } = useMutation({
+    mutationKey: ["login"],
+    mutationFn: () => login(email, password),
+    onSuccess: (data) => {
+      console.log("Success:", data);
+    },
+  });
   const handleSignIn = () => {
     // TODO: Implement sign in logic
     console.log("Sign in with:", { email, password });
+    console.log(email, password);
+    mutate();
+    router.push("/(tabs)/home");
   };
 
   const content = (
