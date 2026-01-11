@@ -23,6 +23,10 @@ export default function Login() {
     mutationFn: () => login(email, password),
     onSuccess: (data) => {
       console.log("Success:", data);
+      router.push("/(tabs)/home");
+    },
+    onError: (err) => {
+      console.log("first", err);
     },
   });
   const handleSignIn = () => {
@@ -30,7 +34,6 @@ export default function Login() {
     console.log("Sign in with:", { email, password });
     console.log(email, password);
     mutate();
-    router.push("/(tabs)/home");
   };
 
   const content = (
