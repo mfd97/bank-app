@@ -26,6 +26,8 @@ export default function Network() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["users", "all"],
     queryFn: getAllUsers,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   // Track which images failed to load

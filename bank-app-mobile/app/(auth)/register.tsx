@@ -12,7 +12,7 @@ import {
   Image,
 } from "react-native";
 import { Link, router } from "expo-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
 import { register } from "../../api/auth";
 import { setToken } from "../../api/storage";
@@ -23,6 +23,7 @@ export default function Register() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["register"],
@@ -35,6 +36,8 @@ export default function Register() {
       if (token) {
         await setToken(token);
       }
+      // Invalidate user query to fetch new user data
+      queryClient.invalidateQueries({ queryKey: ["user", "me"] });
       router.push("/(tabs)/home");
     },
     onError: (err: any) => {

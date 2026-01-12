@@ -11,7 +11,7 @@ import {
   Alert,
 } from "react-native";
 import { Link, router } from "expo-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { login } from "../../api/auth";
 import { setToken } from "../../api/storage";
 
@@ -20,6 +20,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["login"],
@@ -32,6 +33,8 @@ export default function Login() {
       if (token) {
         await setToken(token);
       }
+      // Invalidate user query to fetch current user data
+      queryClient.invalidateQueries({ queryKey: ["user", "me"] });
       router.push("/(tabs)/home");
     },
     onError: (err: any) => {
