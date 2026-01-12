@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Alert,
 } from "react-native";
 import { Link, router } from "expo-router";
 import { useMutation } from "@tanstack/react-query";
@@ -18,12 +19,14 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: ["login"],
     mutationFn: () => login(email, password),
     onSuccess: async (data) => {
       console.log("Success:", data);
+      setErrorMessage("");
       // Store the token if it exists in the response
       const token = data?.token || data?.data?.token;
       if (token) {
@@ -31,15 +34,32 @@ export default function Login() {
       }
       router.push("/(tabs)/home");
     },
-    onError: (err) => {
-      console.log("first", err);
+    onError: (err: any) => {
+      console.log("Login error:", err);
+      // Extract error message from axios error response
+      const errorMsg =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        "Invalid email or password. Please try again.";
+      setErrorMessage(errorMsg);
+      Alert.alert("Login Failed", errorMsg);
     },
   });
+
   const handleSignIn = () => {
-    // TODO: Implement sign in logic
-    console.log("Sign in with:", { email, password });
-    console.log(email, password);
+    setErrorMessage("");
     mutate();
+  };
+
+  const handleEmailChange = (text: string) => {
+    setEmail(text);
+    setErrorMessage("");
+  };
+
+  const handlePasswordChange = (text: string) => {
+    setPassword(text);
+    setErrorMessage("");
   };
 
   const content = (
@@ -51,6 +71,12 @@ export default function Login() {
         <Text style={styles.title}>Welcome Back</Text>
         <Text style={styles.subtitle}>Sign in to continue</Text>
 
+        {errorMessage ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          </View>
+        ) : null}
+
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Email</Text>
           <TextInput
@@ -58,7 +84,7 @@ export default function Login() {
             placeholder="Enter your email"
             placeholderTextColor="#999"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={handleEmailChange}
             keyboardType="email-address"
             autoCapitalize="none"
             autoComplete="email"
@@ -73,7 +99,7 @@ export default function Login() {
             placeholder="Enter your password"
             placeholderTextColor="#999"
             value={password}
-            onChangeText={setPassword}
+            onChangeText={handlePasswordChange}
             secureTextEntry={!isPasswordVisible}
             autoCapitalize="none"
             autoComplete="password"
@@ -92,12 +118,14 @@ export default function Login() {
         <TouchableOpacity
           style={[
             styles.button,
-            (!email || !password) && styles.buttonDisabled,
+            (!email || !password || isPending) && styles.buttonDisabled,
           ]}
           onPress={handleSignIn}
-          disabled={!email || !password}
+          disabled={!email || !password || isPending}
         >
-          <Text style={styles.buttonText}>Sign In</Text>
+          <Text style={styles.buttonText}>
+            {isPending ? "Signing In..." : "Sign In"}
+          </Text>
         </TouchableOpacity>
 
         <View style={styles.linkContainer}>
@@ -152,6 +180,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#666",
     marginBottom: 32,
+    textAlign: "center",
+  },
+  errorContainer: {
+    backgroundColor: "#ffebee",
+    borderColor: "#ff3b30",
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 20,
+  },
+  errorText: {
+    color: "#ff3b30",
+    fontSize: 14,
     textAlign: "center",
   },
   inputContainer: {
