@@ -30,3 +30,18 @@ export const transfer = async (amount: number, toUserId: string) => {
   console.log("response.data", response.data);
   return response.data;
 };
+
+export const withdraw = async (amount: number) => {
+  const token = await getToken();
+  const response = await waiter.post(
+    "/api/transactions/withdraw",
+    { amount },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  console.log("response.data", response.data);
+  return response.data;
+};
