@@ -5,7 +5,7 @@ import { getMe } from "../../api/auth";
 interface User {
   username: string;
   balance: number;
-  profilePicture?: string;
+  imagePath?: string;
 }
 
 export default function ProfileScreen() {
@@ -36,14 +36,25 @@ export default function ProfileScreen() {
 
   const user = data?.data as User | undefined;
 
+  // Helper function to get full image URL
+  const getImageUrl = (imageUrl: string | undefined) => {
+    if (!imageUrl) return null;
+    // If it's already a full URL, return as is
+    if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+      return imageUrl;
+    }
+    // If it's a relative URL, prepend the base URL
+    const baseURL = "https://bank-app-be-eapi-btf5b.ondigitalocean.app";
+    return `${baseURL}${imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`}`;
+  };
+
+  const imageUrl = getImageUrl(user?.imagePath);
+
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
-        {user?.profilePicture ? (
-          <Image
-            source={{ uri: user.profilePicture }}
-            style={styles.profileImage}
-          />
+        {imageUrl ? (
+          <Image source={{ uri: imageUrl }} style={styles.profileImage} />
         ) : (
           <View style={styles.profileImagePlaceholder}>
             <Text style={styles.profileImageText}>

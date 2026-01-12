@@ -16,14 +16,14 @@ import { login } from "../../api/auth";
 import { setToken } from "../../api/storage";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["login"],
-    mutationFn: () => login(email, password),
+    mutationFn: () => login(username, password),
     onSuccess: async (data) => {
       console.log("Success:", data);
       setErrorMessage("");
@@ -41,7 +41,7 @@ export default function Login() {
         err?.response?.data?.message ||
         err?.response?.data?.error ||
         err?.message ||
-        "Invalid email or password. Please try again.";
+        "Invalid username or password. Please try again.";
       setErrorMessage(errorMsg);
       Alert.alert("Login Failed", errorMsg);
     },
@@ -52,8 +52,8 @@ export default function Login() {
     mutate();
   };
 
-  const handleEmailChange = (text: string) => {
-    setEmail(text);
+  const handleUsernameChange = (text: string) => {
+    setUsername(text);
     setErrorMessage("");
   };
 
@@ -78,17 +78,16 @@ export default function Login() {
         ) : null}
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email</Text>
+          <Text style={styles.label}>Username</Text>
           <TextInput
             style={styles.input}
-            placeholder="Enter your email"
+            placeholder="Enter your username"
             placeholderTextColor="#999"
-            value={email}
-            onChangeText={handleEmailChange}
-            keyboardType="email-address"
+            value={username}
+            onChangeText={handleUsernameChange}
             autoCapitalize="none"
-            autoComplete="email"
-            textContentType="emailAddress"
+            autoComplete="username"
+            textContentType="username"
           />
         </View>
 
@@ -118,10 +117,10 @@ export default function Login() {
         <TouchableOpacity
           style={[
             styles.button,
-            (!email || !password || isPending) && styles.buttonDisabled,
+            (!username || !password || isPending) && styles.buttonDisabled,
           ]}
           onPress={handleSignIn}
-          disabled={!email || !password || isPending}
+          disabled={!username || !password || isPending}
         >
           <Text style={styles.buttonText}>
             {isPending ? "Signing In..." : "Sign In"}
