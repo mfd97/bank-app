@@ -12,6 +12,7 @@ import {
 import { Link, router } from "expo-router";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../../api/auth";
+import { setToken } from "../../api/storage";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -21,8 +22,13 @@ export default function Login() {
   const { mutate } = useMutation({
     mutationKey: ["login"],
     mutationFn: () => login(email, password),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log("Success:", data);
+      // Store the token if it exists in the response
+      const token = data?.token || data?.data?.token;
+      if (token) {
+        await setToken(token);
+      }
       router.push("/(tabs)/home");
     },
     onError: (err) => {
